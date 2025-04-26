@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "seed:songs": "node seeds/songs.js",
+    "seed:albums": "node seeds/album.js"
   },
   "type": "module",
   "author": "",

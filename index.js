@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import path from 'path';
+import cors from 'cors';
 
 import { clerkMiddleware } from "@clerk/express";
 import fileUpload from "express-fileupload";
@@ -21,7 +22,10 @@ const __dirname = path.resolve();
 
 const app = express();
 
-app.use(clerkMiddleware());
+app.use(clerkMiddleware({
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+  secretKey: process.env.CLERK_SECRET_KEY,
+}));
 app.use(fileUpload({
   useTempFiles: true,
   tempFileDir: path.join(__dirname, 'tmp'),
@@ -32,6 +36,24 @@ app.use(fileUpload({
 }));
 
 const port = parseInt(process.env.PORT) || process.argv[3] || 8080;
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://192.168.1.6:3000", 
+  "http://192.168.0.118:3000",
+  "http://192.168.73.171:3000"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 
 app.use(express.json());
 
